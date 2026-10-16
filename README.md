@@ -26,3 +26,10 @@
 - `create-actions` — створює GitHub Actions workflow для Windows, Linux і macOS.
 - `check` — перевіряє структуру, збирання, тести, workflow та Git-ігнорування.
 - `init` — послідовно виконує ініціалізаційні команди та завершує перевіркою.
+
+## Build and run
+
+- Windows, multi-config (Visual Studio): `build\Release\hello.exe`
+- Windows, single-config: `build\hello.exe`
+- Linux/macOS, single-config: `./build/hello`
+- Linux/macOS, multi-config: `./build/Release/hello`
