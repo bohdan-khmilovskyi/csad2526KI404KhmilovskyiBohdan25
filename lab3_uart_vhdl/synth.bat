@@ -37,14 +37,12 @@ if exist synth\ghdl_work rmdir /s /q synth\ghdl_work
 mkdir synth\ghdl_work
 if not exist reports mkdir reports
 
-> reports\tool_versions.txt echo GHDL:
-ghdl --version >> reports\tool_versions.txt 2>&1
->> reports\tool_versions.txt echo.
->> reports\tool_versions.txt echo Yosys:
-yosys -V >> reports\tool_versions.txt 2>&1
->> reports\tool_versions.txt echo.
->> reports\tool_versions.txt echo nextpnr-ice40:
-nextpnr-ice40 --version >> reports\tool_versions.txt 2>&1
+for /f "delims=" %%V in ('ghdl --version ^| findstr /B /C:"GHDL "') do set "GHDL_VERSION=%%V"
+for /f "delims=" %%V in ('yosys -V') do set "YOSYS_VERSION=%%V"
+for /f "delims=" %%V in ('nextpnr-ice40 --version') do set "NEXTPNR_VERSION=%%V"
+> reports\tool_versions.txt echo GHDL: %GHDL_VERSION%
+>> reports\tool_versions.txt echo Yosys: %YOSYS_VERSION%
+>> reports\tool_versions.txt echo nextpnr-ice40: %NEXTPNR_VERSION%
 
 echo ==========================================
 echo APKS Lab 3 - UART VHDL synthesis

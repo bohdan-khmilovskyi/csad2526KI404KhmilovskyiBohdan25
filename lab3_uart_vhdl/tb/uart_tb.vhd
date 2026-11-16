@@ -1,4 +1,4 @@
--- Самоперевірний тестбенч UART: передає декілька байтів і перевіряє loopback RX.
+-- Самоперевірний тестбенч UART: передає байти й перевіряє їх приймання.
 library ieee;
 use ieee.std_logic_1164.all;
 use std.env.all;
@@ -26,7 +26,7 @@ architecture sim of uart_tb is
     signal rx_error  : std_logic;
 begin
     clk <= not clk after C_CLK_PERIOD / 2;
-    rx_serial <= tx_serial; -- Loopback: вихід передавача підключено до входу приймача.
+    rx_serial <= tx_serial; -- Вихід передавача підключено до входу приймача.
 
     dut : entity work.uart_top
         generic map (

@@ -7,24 +7,24 @@ entity uart_rx is
         G_CLKS_PER_BIT : positive := 5208
     );
     port (
-        clk       : in  std_logic;
-        rst       : in  std_logic;
-        rx_serial : in  std_logic;
-        rx_data   : out std_logic_vector(7 downto 0);
-        rx_valid  : out std_logic;
-        rx_error  : out std_logic
+        clk       : in  std_logic; -- Системний тактовий сигнал.
+        rst       : in  std_logic; -- Синхронне скидання приймача.
+        rx_serial : in  std_logic; -- Послідовний вхід UART.
+        rx_data   : out std_logic_vector(7 downto 0); -- Останній коректно прийнятий байт.
+        rx_valid  : out std_logic; -- Імпульс після приймання коректного кадру.
+        rx_error  : out std_logic  -- Імпульс за некоректного стопового біта.
     );
 end entity uart_rx;
 
 architecture rtl of uart_rx is
     type state_t is (IDLE, START_BIT, DATA_BITS, STOP_BIT);
-    signal state     : state_t := IDLE;
-    signal counter   : natural range 0 to G_CLKS_PER_BIT - 1 := 0;
-    signal bit_index : natural range 0 to 7 := 0;
-    signal data_reg  : std_logic_vector(7 downto 0) := (others => '0');
-    signal data_out  : std_logic_vector(7 downto 0) := (others => '0');
-    signal valid_reg : std_logic := '0';
-    signal error_reg : std_logic := '0';
+    signal state     : state_t := IDLE; -- Поточний стан автомата RX.
+    signal counter   : natural range 0 to G_CLKS_PER_BIT - 1 := 0; -- Відлік до моменту зчитування біта.
+    signal bit_index : natural range 0 to 7 := 0; -- Номер біта, який приймається.
+    signal data_reg  : std_logic_vector(7 downto 0) := (others => '0'); -- Проміжний байт.
+    signal data_out  : std_logic_vector(7 downto 0) := (others => '0'); -- Прийнятий байт на виході.
+    signal valid_reg : std_logic := '0'; -- Однотактна ознака коректного кадру.
+    signal error_reg : std_logic := '0'; -- Однотактна ознака помилки стопового біта.
 begin
     rx_data  <= data_out;
     rx_valid <= valid_reg;

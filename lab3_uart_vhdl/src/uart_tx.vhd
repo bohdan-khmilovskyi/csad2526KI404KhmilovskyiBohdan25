@@ -4,24 +4,24 @@ use ieee.std_logic_1164.all;
 
 entity uart_tx is
     port (
-        clk       : in  std_logic;
-        rst       : in  std_logic;
-        baud_tick : in  std_logic;
-        tx_start  : in  std_logic;
-        tx_data   : in  std_logic_vector(7 downto 0);
-        tx_serial : out std_logic;
-        tx_busy   : out std_logic;
-        tx_done   : out std_logic
+        clk       : in  std_logic; -- Системний тактовий сигнал.
+        rst       : in  std_logic; -- Синхронне скидання передавача.
+        baud_tick : in  std_logic; -- Імпульс переходу до наступного біта.
+        tx_start  : in  std_logic; -- Однотактний запит передавання у стані IDLE.
+        tx_data   : in  std_logic_vector(7 downto 0); -- Байт для передавання.
+        tx_serial : out std_logic; -- Послідовний вихід UART, у стані очікування = 1.
+        tx_busy   : out std_logic; -- Ознака активного передавання.
+        tx_done   : out std_logic  -- Імпульс завершення кадру.
     );
 end entity uart_tx;
 
 architecture rtl of uart_tx is
     type state_t is (IDLE, START_BIT, DATA_BITS, STOP_BIT);
-    signal state      : state_t := IDLE;
-    signal data_reg   : std_logic_vector(7 downto 0) := (others => '0');
-    signal bit_index  : natural range 0 to 7 := 0;
-    signal serial_reg : std_logic := '1';
-    signal done_reg   : std_logic := '0';
+    signal state      : state_t := IDLE; -- Поточний стан автомата TX.
+    signal data_reg   : std_logic_vector(7 downto 0) := (others => '0'); -- Байт, що передається.
+    signal bit_index  : natural range 0 to 7 := 0; -- Номер біта в data_reg.
+    signal serial_reg : std_logic := '1'; -- Поточний рівень виходу tx_serial.
+    signal done_reg   : std_logic := '0'; -- Однотактний сигнал завершення кадру.
 begin
     tx_serial <= serial_reg;
     tx_done   <= done_reg;

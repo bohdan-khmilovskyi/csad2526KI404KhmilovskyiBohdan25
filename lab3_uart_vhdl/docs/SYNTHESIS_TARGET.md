@@ -1,36 +1,33 @@
-# UART synthesis target
+# Цільова конфігурація синтезу
 
-The lab handout requires synthesis for a target FPGA but does not specify a device. For a reproducible software-only estimate, this project uses Lattice iCE40 HX8K in package CT256 as an explicitly selected target. No physical board is claimed.
+Для синтезу та оцінювання часових характеристик обрано **Lattice iCE40 HX8K у корпусі CT256**. Верхній модуль — `uart_top`. Частота системного сигналу — 50 МГц, швидкість UART — 9600 бод, формат кадру — 8N1. Значення `C_CLKS_PER_BIT` дорівнює 5208.
 
-## Assumed configuration
+## Інструменти
 
-- System clock: 50 MHz (`G_CLK_FREQ_HZ = 50000000`).
-- UART baud rate: 9600 (`G_BAUD_RATE = 9600`).
-- Frame: 8N1.
-- Top module: `uart_top`.
-- Simulation-only testbench is not synthesized.
-- No board pinout was supplied; `nextpnr-ice40` is run with `--pcf-allow-unconstrained`, so IO pins are automatically placed and the result is not a board-ready bitstream.
+- GHDL — аналіз VHDL і формування Verilog.
+- Yosys — синтез логіки для iCE40.
+- nextpnr-ice40 — розміщення, трасування та часовий аналіз.
 
-These clock and UART settings are project assumptions, not values stated in the handout or confirmed by an instructor.
+Версії інструментів зафіксовано у `reports/tool_versions.txt`. Команди запуску містяться у `synth.bat`.
 
-## Windows paths
+## Використання ресурсів
 
-The batch script expects:
+За звітом Yosys отримано:
 
-- OSS CAD Suite: `F:\Tools\oss-cad-suite`
-- GHDL: `F:\Tools\ghdl\bin\ghdl.exe`
+| Елемент | Кількість |
+|---|---:|
+| `SB_LUT4` | 109 |
+| `SB_DFFESR` | 35 |
+| `SB_DFFSR` | 29 |
+| `SB_CARRY` | 24 |
+| Тригери, разом | 64 |
 
-Copy the complete GHDL distribution folder (including `bin`, `lib`, and `include`) to `F:\Tools\ghdl`. The ASCII-only paths avoid Windows `cmd.exe` misreading a non-ASCII source path.
+За звітом nextpnr використано 141 із 7680 логічних комірок `ICESTORM_LC` (близько 1 %). Додатково використано 25 із 206 комірок `SB_IO` та одну з восьми комірок `SB_GB`.
 
-## Run
+## Часові характеристики
 
-Double-click `synth.bat` from the project folder. It analyzes VHDL, asks GHDL to emit Verilog, maps it with Yosys, then runs nextpnr for iCE40 HX8K CT256.
+Після розміщення та трасування nextpnr визначив максимальну частоту **141,92 МГц**. Для заданого обмеження 50 МГц отримано статус `PASS`. Сумарна затримка критичного синхронного шляху у звіті становить приблизно 7,05 нс.
 
-## Reports
+## Обмеження результату
 
-- `reports/yosys.log`: synthesis and cell statistics, including iCE40 logic and flip-flop usage.
-- `reports/nextpnr.log`: placement, routing and timing summary.
-- `reports/nextpnr_report.json`: machine-readable resource and timing report.
-- `reports/tool_versions.txt`: exact tool versions.
-
-Only report figures from a successful run. Fmax is a timing estimate for the selected software target and assumed clock constraint, not a measurement on physical hardware.
+Файл PCF із призначенням контактів не використовувався. У команді nextpnr застосовано `--pcf-allow-unconstrained`, тому розміщення виводів виконано автоматично; журнал містить відповідне попередження. Фізична FPGA-плата не використовувалася. Значення використання ресурсів і Fmax є результатами програмного синтезу та трасування для обраної конфігурації.

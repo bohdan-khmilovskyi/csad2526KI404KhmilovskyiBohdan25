@@ -8,17 +8,17 @@ entity baud_generator is
         G_CLKS_PER_BIT : positive := 5208
     );
     port (
-        clk       : in  std_logic;
-        rst       : in  std_logic;
-        restart   : in  std_logic;
-        baud_tick : out std_logic
+        clk       : in  std_logic; -- Системний тактовий сигнал.
+        rst       : in  std_logic; -- Синхронне скидання лічильника.
+        restart   : in  std_logic; -- Початок нового інтервалу передавання.
+        baud_tick : out std_logic  -- Імпульс на один такт clk.
     );
 end entity baud_generator;
 
 architecture rtl of baud_generator is
-    signal counter : natural range 0 to G_CLKS_PER_BIT - 1 := 0;
+    signal counter : natural range 0 to G_CLKS_PER_BIT - 1 := 0; -- Лічильник тактів у межах одного біта.
 begin
-    -- Комбiнаційний імпульс на останньому такті інтервалу.
+    -- Комбінаційний імпульс на останньому такті інтервалу.
     baud_tick <= '1' when counter = G_CLKS_PER_BIT - 1 else '0';
 
     process (clk)
