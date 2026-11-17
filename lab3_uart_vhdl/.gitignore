@@ -1,0 +1,8 @@
+sim/work/
+sim/*.vcd
+sim/*.ghw
+*.cf
+synth/ghdl_work/
+synth/uart_top.v
+synth/uart_top.json
+synth/uart_top.asc

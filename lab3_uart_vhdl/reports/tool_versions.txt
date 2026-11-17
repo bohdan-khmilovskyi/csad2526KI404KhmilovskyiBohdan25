@@ -1,0 +1,3 @@
+GHDL: 6.0.0 (6.0.0.r0.ge589c698c.dirty)
+Yosys: 0.71+34 (git sha1 e419c4eef)
+nextpnr-ice40: 0.11.1-92-g5e2718b6
